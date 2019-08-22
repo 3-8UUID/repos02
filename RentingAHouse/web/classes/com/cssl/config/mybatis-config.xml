@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--    <properties resource="com/cssl/config/oraclebd.properties"></properties>-->
+    <settings>
+        <!--        日志-->
+        <setting name="logImpl" value="LOG4J"/>
+        <!--        主键自动自增-->
+        <setting name="useGeneratedKeys" value="true"/>
+        <!--        自动映射行为-->
+        <setting name="autoMappingBehavior" value="FULL"/>
+        <!--        开启懒加载全局开关  true:开启延时加载 ，默认是false  -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!--        写上：true:懒加载的对象可能被任何相关属性一起加载，false:不会加载不相关的属性,按需加载 -->
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <!--开启二级缓存  -->
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+    <!--    <typeAliases>-->
+    <!--        <package name="com.cssl.pojo"/>-->
+    <!--    </typeAliases>-->
+
+    <plugins>
+
+        <plugin interceptor="com.github.pagehelper.PageHelper">
+
+            <!-- <property name="dialect" value="mysql"/> -->
+            <!-- pageSize=0相当于没有执行分页查询，但是返回结果仍然是Page类型 -->
+<!--            <property name="pageSizeZero" value="true"/>-->
+            <!-- 启用合理化时，如果pageNum<1或pageNum>pages会返回首页或尾页 -->
+<!--            <property name="reasonable" value="true"/>-->
+        </plugin>
+
+
+    </plugins>
+
+
+    <!--    <environments default="development">-->
+    <!--        <environment id="development">-->
+    <!--            <transactionManager type="JDBC"/>-->
+    <!--            <dataSource type="POOLED">-->
+    <!--                <property name="driver" value="${driver}"/>-->
+    <!--                <property name="url" value="${url}"/>-->
+    <!--                <property name="username" value="${username}"/>-->
+    <!--                <property name="password" value="${password}"/>-->
+    <!--            </dataSource>-->
+    <!--        </environment>-->
+    <!--    </environments>-->
+    <!--    <mappers>-->
+    <!--        <package name="com.cssl.mapper"/>-->
+    <!--    </mappers>-->
+</configuration>

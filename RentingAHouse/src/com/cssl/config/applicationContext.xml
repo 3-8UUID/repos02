@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+
+
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!--    配置资源-->
+    <context:component-scan base-package="com.cssl">
+        <!--       扫描除Controller 外的注解包 在com.cssl中-->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+    <!--    配置文件-->
+    <!--    <context:property-placeholder location="classpath:oraclebd.properties"/>-->
+    <!--配置数据源-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <!--        <property name="url" value="${jdbc.url}"></property>-->
+        <!--        <property name="password" value="${jdbc.password}"></property>-->
+        <!--        <property name="driverClassName" value="${jdbc.driver}"/>-->
+        <!--        <property name="username" value="${jdbc.username}"/>-->
+        <property name="url" value="jdbc:oracle:thin://127.0.0.1:1521/orcl"></property>
+        <property name="password" value="tiger"></property>
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+        <property name="username" value="scott"/>
+    </bean>
+
+    <!--会话工厂 SqlSessionFactoryBean-->
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactory">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="configLocation" value="classpath:com/cssl/config/mybatis-config.xml"/>
+        <property name="typeAliasesPackage" value="com.cssl.pojo"></property>
+        <!--        <property name="mapperLocations">-->
+        <!--        <list>-->
+        <!--            <value>classpath:com/cssl/mapper/*.xml</value>-->
+        <!--        </list>-->
+        <!--    </property>-->
+    </bean>
+    <!--    自动扫描对象映射关系-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" id="configurer">
+        <property name="basePackage" value="com.cssl.mapper"></property>
+    </bean>
+    <!--    <bean class="org.mybatis.spring.SqlSessionTemplate" id="sessionTemplate">-->
+    <!--        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"></constructor-arg>-->
+    <!--    </bean>-->
+
+    <!--    <bean class="com.cssl.mapper.UserDaoImpl" id="userDao">-->
+    <!--        <property name="template" ref="sessionTemplate"></property>-->
+    <!--    </bean>-->
+    <!--    声明式事务管理-->
+    <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="txManager">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="defaultTimeout" value="-1"></property>
+    </bean>
+    <!--支持注解驱动的事务管理，指定事务管理器 -->
+    <tx:annotation-driven transaction-manager="txManager"></tx:annotation-driven>
+
+    <!--    aspectj支持自动代理实现AOP功能-->
+    <aop:aspectj-autoproxy proxy-target-class="true"></aop:aspectj-autoproxy>
+
+
+</beans>

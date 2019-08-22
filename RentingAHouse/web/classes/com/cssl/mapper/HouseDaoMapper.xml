@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cssl.mapper.HouseDaoMapper">
+
+    <!--用于分页插件查询的sql-->
+    <sql id="sql_1">
+        <trim prefix="where" suffixOverrides="and || or" prefixOverrides="and">
+            <if test="page!=null"></if>
+        </trim>
+    </sql>
+    <update id="addHouseFile" parameterType="house">
+        update house set filename=#{fileName} where id=#{id}
+    </update>
+    <!--    插件分页查询-->
+    <select id="selectByWhere" parameterType="map" resultType="house">
+        select * from house
+
+    </select>
+    <!--新增租房信息-->
+    <insert id="addHouse" parameterType="house">
+        <selectKey resultType="int" keyProperty="id" order="BEFORE">
+            select HOUSE_ID.NEXTVAL from dual
+        </selectKey>
+        insert into house (id, user_id, type_id, title, description, price, pubdate, floorage, street_id,contact,filename)
+        values (#{id}, #{user_id}, #{type_id}, #{title}, #{description}, #{price}, #{pubdate}, #{floorage},
+        #{street_id},#{contact} ,#{fileName} )
+    </insert>
+    <!--修改租房信息-->
+    <update id="updateHouse" parameterType="house">
+        update house
+        <set>
+            <if test="user_id!=null and user_id!=0">
+                user_id = #{user_id},
+            </if>
+            <if test="type_id!=null and type_id!=0">
+                type_id = #{type_id},
+            </if>
+            <if test="title!=null and title!=''">
+                title = #{title},
+            </if>
+            <if test="description!=null and description!=''">
+                description = #{description},
+            </if>
+            <if test="price!=null and price!=0">
+                price = #{price},
+            </if>
+            <if test="pubdate!=null">
+                pubdate = #{pubdate},
+            </if>
+            <if test="floorage!=null and floorage!=0">
+                floorage = #{floorage},
+            </if>
+            <if test="street_id!=null and street_id!=0">
+                street_id = #{street_id},
+            </if>
+            <if test="contact!=null and contact!=''">
+                contact = #{contact},
+            </if>
+            <if test="fileName!=null and fileName!=''">
+                fileName = #{fileName}
+            </if>
+
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--    传统分页查询-->
+    <select id="findAllByHouse" parameterType="map" resultType="house">
+        select * from
+        (select h.*,rownum rn from
+        (select * from house
+        <include refid="sql_2"></include>
+        ) h
+        <if test="row != null and row != 0">
+            where rownum &lt;= #{row}
+        </if>
+        )
+        <if test="rn != null and rn != 0">
+            where rn>#{rn}
+        </if>
+
+
+    </select>
+    <!--    用于传统分页查询的sql-->
+    <sql id="sql_2">
+        <trim prefix="where" suffixOverrides="and || or" prefixOverrides="and">
+            <if test="title!=null and title!=''">
+                and title like concat(concat('%',#{title}),'%')
+            </if>
+            <if test="floorsta!=null and floorsta!=0 ">
+                <![CDATA[  and floorage > #{floorsta} ]]>
+            </if>
+            <if test="floorend!=null and  floorend!=0">
+                <![CDATA[  and floorage<=#{floorend}  ]]>
+            </if>
+            <if test="type_id!=null and type_id!=''">
+                and type_id = #{type_id}
+            </if>
+            <if test="pricestr!=null and pricestr!=0 ">
+                <![CDATA[  and price > #{pricestr}   ]]>
+            </if>
+            <if test=" priceend!=0 and priceend!=null">
+                <![CDATA[ and price<=#{priceend}  ]]>
+            </if>
+            <if test="street_id!=null and street_id!=''">
+                and street_id = #{street_id}
+            </if>
+        </trim>
+    </sql>
+    <!--    查询总数据量-->
+    <select id="getCount" parameterType="map" resultType="int">
+        select count(0) from
+        (select h.*,rownum rn from
+        (select * from house
+        <include refid="sql_2"></include>
+        ) h
+        )
+
+
+    </select>
+
+</mapper>
